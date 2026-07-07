@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canım Berna'ma... 🌹</title>
+    <style>
+        :root {
+            --primary-pink: #ff85a2;
+            --dark-pink: #ff477e;
+            --light-pink: #ffe5ec;
+            --bg-color: #fff0f5;
+            --text-color: #4a0e17;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', 'Segoe UI', Tahoma, sans-serif; }
+        body { background-color: var(--bg-color); min-height: 100vh; overflow-x: hidden; display: flex; justify-content: center; align-items: center; position: relative; }
+
+        /* Arka Plan Parçacıkları */
+        #particle-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+        .particle { position: absolute; pointer-events: none; animation: floatUp linear infinite; }
+
+        @keyframes floatUp {
+            0% { transform: translateY(105vh) rotate(0deg) scale(0.5); opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) rotate(360deg) scale(1.2); opacity: 0; }
+        }
+
+        /* Ana Kapsayıcı */
+        .wrapper { z-index: 10; width: 100%; max-width: 650px; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+
+        /* 3D Zarf Tasarımı */
+        .envelope-container { width: 320px; height: 220px; position: relative; background: var(--primary-pink); border-radius: 0 0 15px 15px; box-shadow: 0 15px 35px rgba(0,0,0,0.15); cursor: pointer; display: flex; justify-content: center; align-items: center; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .envelope-container:hover { transform: scale(1.05) rotate(-1deg); }
+        
+        .envelope-flap { position: absolute; top: 0; left: 0; width: 0; height: 0; border-left: 160px solid transparent; border-right: 160px solid transparent; border-top: 120px solid var(--dark-pink); transform-origin: top; transition: transform 0.4s ease; z-index: 3; border-radius: 5px; }
+        .envelope-container.open .envelope-flap { transform: rotateX(180deg); z-index: 1; }
+        
+        .envelope-pocket { position: absolute; bottom: 0; left: 0; width: 100%; height: 120px; background: #ff7597; border-radius: 0 0 15px 15px; z-index: 2; display: flex; justify-content: center; align-items: center; }
+        .envelope-text { color: white; font-weight: 600; font-size: 1.1rem; letter-spacing: 1px; text-shadow: 1px 1px 3px rgba(0,0,0,0.2); animation: pulse 1.5s infinite; }
+
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+
+        /* Mektup İçeriği (Görünmez Başlar) */
+        .main-card { display: none; background: white; width: 100%; border-radius: 25px; padding: 40px 30px; box-shadow: 0 20px 40px rgba(255, 71, 126, 0.15); border: 2px solid var(--light-pink); text-align: center; opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+        .main-card.show { display: block; opacity: 1; transform: translateY(0); }
+
+        /* Başlıklar ve Yazılar */
+        .header-title { font-size: 2.2rem; color: var(--dark-pink); margin-bottom: 5px; font-weight: 800; }
+        .subtitle { font-size: 1.1rem; color: #a24b5c; font-style: italic; margin-bottom: 25px; display: block; }
+        
+        .divider { width: 60%; height: 2px; background: linear-gradient(to right, transparent, var(--primary-pink), transparent); margin: 20px auto; }
+
+        .letter-text { text-align: left; color: var(--text-color); font-size: 1.1rem; line-height: 1.8; margin-bottom: 25px; min-height: 150px; white-space: pre-line; padding: 10px; border-left: 3px solid var(--primary-pink); background: #fffafb; border-radius: 0 10px 10px 0; }
+
+        /* Fotoğraf Galerisi */
+        .gallery-title { font-size: 1.3rem; color: var(--dark-pink); margin: 30px 0 15px; font-weight: 600; text-align: left; }
+        .photo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 30px; }
+        .photo-box { background: var(--light-pink); height: 130px; border-radius: 12px; overflow: hidden; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border: 3px solid white; transition: transform 0.3s; }
+        .photo-box:hover { transform: scale(1.08) rotate(2deg); z-index: 5; }
+        .photo-box img { width: 100%; height: 100%; object-fit: cover; }
+        .photo-placeholder { display: flex; justify-content: center; align-items: center; height: 100%; font-size: 1.5rem; color: var(--dark-pink); }
+
+        /* İnteraktif Soru Alanı */
+        .question-zone { background: var(--light-pink); padding: 25px; border-radius: 18px; margin-top: 20px; position: relative; overflow: hidden; }
+        .question-title { font-size: 1.2rem; color: var(--text-color); font-weight: 700; margin-bottom: 15px; }
+        .btn-group { display: flex; justify-content: center; gap: 20px; height: 50px; align-items: center; position: relative; }
+        
+        .btn { padding: 10px 30px; border: none; border-radius: 25px; font-weight: 600; font-size: 1rem; cursor: pointer; transition: all 0.2s; }
+        #btn-yes { background: var(--dark-pink); color: white; box-shadow: 0 5px 15px rgba(255, 71, 126, 0.4); }
+        #btn-yes:hover { transform: scale(1.1); background: #e03265; }
+        #btn-no { background: #b0bec5; color: white; position: absolute; white-space: nowrap; }
+
+        /* Pop-up Başarı Mesajı */
+        .success-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 100; justify-content: center; align-items: center; }
+        .success-box { background: white; padding: 40px; border-radius: 20px; text-align: center; max-width: 400px; margin: 20px; animation: scaleIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes scaleIn { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .success-box h3 { font-size: 1.8rem; color: var(--dark-pink); margin-bottom: 15px; }
+        .success-box p { font-size: 1.1rem; color: var(--text-color); line-height: 1.5; }
+    </style>
+</head>
+<body>
+
+    <!-- Arka planda uçuşan kalpler/güller için container -->
+    <div id="particle-container"></div>
+
+    <div class="wrapper">
+        <!-- Giriş Zarfı -->
+        <div class="envelope-container" id="envelope" onclick="openEnvelope()">
+            <div class="envelope-flap"></div>
+            <div class="envelope-pocket">
+                <span class="envelope-text">Berna'm İçin... 💌</span>
+            </div>
+        </div>
+
+        <!-- Mektup Kartı -->
+        <div class="main-card" id="main-card">
+            <h1 class="header-title">Canım Ballım, Prensesim...</h1>
+            <span class="subtitle">Trabzon'un en hırçın, en güzel çiçeğine 🌹</span>
+            
+            <div class="divider"></div>
+
+            <!-- Canlı Yazılacak Metin Alanı -->
+            <div class="letter-text" id="typed-text"></div>
+
+            <div class="divider"></div>
+
+            <!-- Fotoğraf Galerisi -->
+            <h3 class="gallery-title">Anılarımızdan Küçük Kareler... 📸</h3>
+            <div class="photo-grid">
+                <div class="photo-box">
+                    <img src="foto1.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="photo-placeholder" style="display:none;">🖼️</div>
+                </div>
+                <div class="photo-box">
+                    <img src="foto2.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="photo-placeholder" style="display:none;">❤️</div>
+                </div>
+                <div class="photo-box">
+                    <img src="foto3.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="photo-placeholder" style="display:none;">✨</div>
+                </div>
+            </div>
+
+            <!-- İnteraktif Affetme Alanı -->
+            <div class="question-zone">
+                <p class="question-title">Beni affettin mi ballım? Aramızdaki mesafeleri eritip sarılalım mı yeniden?</p>
+                <div class="btn-group" id="btn-container">
+                    <button class="btn" id="btn-yes" onclick="showSuccess()">Evet, Affettim</button>
+                    <button class="btn" id="btn-no" onmouseover="dodgeButton()" onclick="dodgeButton()">Hayır</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Başarı Ekranı -->
+    <div class="success-overlay" id="success-modal">
+        <div class="success-box">
+            <h3>Seni Çok Seviyorum! 💖</h3>
+            <p>Dünyanın en tatlı kararı! Kalbini kırdığım her saniye için özür dilerim prensesim. Hemen WhatsApp'a gel, sesini duymayı sabırsızlıkla bekliyorum!</p>
+        </div>
+    </div>
+
+    <script>
+        // Mektup Metni (Satır satır typewriter efekti ile akacak)
+        const rawText = "Son birkaç gündür aramızdaki o sessizlik inan ki soluduğum havayı bile ağırlaştırıyor.\n\nUzak mesafeler zaten ikimizi de fazlasıyla yorarken, bir de üstüne birbirimizin kalbini kırmak, sana sesimi yükseltmek beni tamamen darmadağın etti. Sen benim bu hayattaki en değerlimsin, benim prensesimsin.\n\nO anki anlık parlamaların, mesafelerin getirdiği o birikmiş özlemin hırsını birbirimizden çıkarmayalım ne olur. Trabzon'dan kalbime uzanan o güzel bağımızı hiçbir tartışmanın koparmasına izin vermeyeceğim.\n\nGönlünü alana, yüzünü tekrar güldürene kadar buradayım ballım. Seni çok ama çok özledim...";
+
+        // Parçacık Üretim Sistemi (Kalpler ve Gül Yaprakları)
+        const shapes = ['❤️', '🌸', '🌹', '💖', '✨'];
+        const container = document.getElementById('particle-container');
+
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.innerText = shapes[Math.floor(Math.random() * shapes.length)];
+            
+            // Rastgele özellikler
+            particle.style.left = Math.random() * 100 + 'vw';
+            particle.style.fontSize = Math.random() * (30 - 15) + 15 + 'px';
+            
+            const duration = Math.random() * (6 - 3) + 3;
+            particle.style.animationDuration = duration + 's';
+            
+            container.appendChild(particle);
+
+            // Ömrü biten parçacığı temizle
+            setTimeout(() => {
+                particle.remove();
+            }, duration * 1000);
+        }
+
+        // Sürekli parçacık yağdır
+        setInterval(createParticle, 300);
+
+        // Zarf Açılma Mekanizması
+        function openEnvelope() {
+            const envelope = document.getElementById('envelope');
+            const card = document.getElementById('main-card');
+            
+            envelope.classList.add('open');
+            
+            // Zarf küçülerek kaybolsun ve mektup kartı gelsin
+            setTimeout(() => {
+                envelope.style.display = 'none';
+                card.style.display = 'block';
+                
+                // Yumuşak açılış efekti tetiklemesi
+                setTimeout(() => {
+                    card.classList.add('show');
+                    startTypewriter();
+                }, 50);
+            }, 600);
+        }
+
+        // Typewriter (Daktilo) Yazı Efekti
+        let index = 0;
+        function startTypewriter() {
+            const target = document.getElementById('typed-text');
+            if (index < rawText.length) {
+                target.innerHTML += rawText.charAt(index);
+                index++;
+                setTimeout(startTypewriter, 35); // Yazı hızı (milisaniye)
+            }
+        }
+
+        // "Hayır" Butonunun Kaçma Algoritması
+        function dodgeButton() {
+            const noBtn = document.getElementById('btn-no');
+            const container = document.getElementById('btn-container');
+            
+            // Container sınırlarına göre rastgele pozisyon hesaplama
+            const containerRect = container.getBoundingClientRect();
+            const btnWidth = noBtn.offsetWidth;
+            const btnHeight = noBtn.offsetHeight;
+            
+            // Butonun yerleşebileceği maksimum sınırlar (Geniş bir alana kaçması için)
+            const maxX = 150;
+            const minX = -150;
+            const maxY = 80;
+            const minY = -80;
+            
+            const randomX = Math.random() * (maxX - minX) + minX;
+            const randomY = Math.random() * (maxY - minY) + minY;
+            
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+            
+            // Küçük bir muziplik: Her kaçışta buton küçülsün
+            const currentScale = noBtn.style.transform ? parseFloat(noBtn.style.transform.replace('scale(', '')) : 1;
+            if(currentScale > 0.5) {
+                noBtn.style.transform = `scale(${currentScale - 0.1})`;
+            }
+        }
+
+        // Başarı Ekranı Tetikleyicisi
+        function showSuccess() {
+            const modal = document.getElementById('success-modal');
+            modal.style.display = 'flex';
+            
+            // Yoğun kutlama parçacığı patlaması
+            for(let i=0; i<50; i++) {
+                setTimeout(createParticle, i * 50);
+            }
+        }
+    </script>
+</body>
+</html>
