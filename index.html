@@ -448,6 +448,9 @@
 <body>
 
     <!-- Arka planda kesintisiz akan animasyon motor alanı -->
+    <audio id="bg-music" loop>
+        <source src="Hande-Mehan-feat-Cem-Adrian-Sen-Benim-Sarkilarimsin.mp3" type="audio/mpeg">
+    </audio>
     <div id="particle-container"></div>
 
     <div class="wrapper">
@@ -562,6 +565,9 @@
 
         // Zarf Açılma Mekanizması Kontrolü
         function openEnvelope() {
+            // Müzik Başlatma Komutu
+            const music = document.getElementById('bg-music');
+            music.play().catch(e => console.log("Tarayıcı engeli olabilir, etkileşim bekleniyor."));
             const envelope = document.getElementById('envelope');
             const card = document.getElementById('main-card');
             
